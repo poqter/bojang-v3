@@ -23,6 +23,10 @@ st.sidebar.markdown("""
 - 지원 파일 형식: `.xlsx` (엑셀 전용)
 """)
 
+# ✅ 기본폼 다운로드 안내 문구 추가
+st.sidebar.markdown("📝 **기본폼을 변경하고 싶다면, 아래 파일을 다운로드하여 수정 후 업로드하세요.**")
+
+# ✅ 다운로드 버튼
 st.sidebar.download_button(
     label="📥 기본 폼(print.xlsx) 다운로드",
     data=default_template_data,
@@ -34,6 +38,7 @@ st.sidebar.markdown("---")
 st.sidebar.markdown("👨‍💻 **제작자:** 비전본부 드림지점 박병선 팀장")  
 st.sidebar.markdown("🗓️ **버전:** v1.0.0")  
 st.sidebar.markdown("📅 **최종 업데이트:** 2025-06-13")
+
 
 # ✅ 비밀번호 인증
 PASSWORD = st.secrets["PASSWORD"]
