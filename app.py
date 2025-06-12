@@ -91,4 +91,19 @@ if uploaded_main:
         detail_text = main_ws1["D2"].value or ""
         print_ws["A1"] = f"{name_prefix}님의 기존 보험 보장 분석 {detail_text}"
 
-        today_str = datetime.today().strft_
+        today_str = datetime.today().strftime("%Y%m%d")
+        filename = f"{name_prefix}님의_보장분석_{today_str}.xlsx"
+        output_excel = BytesIO()
+        print_wb.save(output_excel)
+        output_excel.seek(0)
+
+        st.success("✅ 분석이 완료되었습니다.")
+        st.download_button(
+            label="📥 결과 파일 다운로드",
+            data=output_excel,
+            file_name=filename,
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+    except Exception as e:
+        st.error(f"⚠️ 오류가 발생했습니다: {str(e)}")
