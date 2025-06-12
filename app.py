@@ -1,5 +1,6 @@
 import streamlit as st
 import openpyxl
+import re
 from io import BytesIO
 from datetime import datetime
 
@@ -22,11 +23,8 @@ st.sidebar.markdown("""
 - `print.xlsx` 미첨부 시, **기본 폼 자동 사용**  
 - 지원 파일: `.xlsx` (엑셀 전용)
 """)
-
-# ✅ 기본폼 다운로드 안내 문구 추가
 st.sidebar.markdown("📝 **기본 폼을 수정하려면 아래 파일을 받아 수정 후 업로드하세요.**")
 
-# ✅ 다운로드 버튼
 st.sidebar.download_button(
     label="📥 기본 폼(print.xlsx) 다운로드",
     data=default_template_data,
@@ -38,7 +36,6 @@ st.sidebar.markdown("---")
 st.sidebar.markdown("👨‍💻 **제작자:** 비전본부 드림지점 박병선 팀장")  
 st.sidebar.markdown("🗓️ **버전:** v1.0.0")  
 st.sidebar.markdown("📅 **최종 업데이트:** 2025-06-13")
-
 
 # ✅ 비밀번호 인증
 PASSWORD = st.secrets["PASSWORD"]
@@ -77,25 +74,35 @@ if uploaded_main:
         main_ws1 = main_wb["계약사항"]
         main_ws2 = main_wb["보장사항"]
 
+        # 계약사항 시트: J, K, L열 → D10~AD10, D8~AD9
         for idx in range(27):
             print_ws.cell(row=10, column=4 + idx).value = main_ws1[f"J{9+idx}"].value
-
         for row_offset, col in enumerate(['K', 'L']):
             for idx in range(27):
                 print_ws.cell(row=8 + row_offset, column=4 + idx).value = main_ws1[f"{col}{9+idx}"].value
 
-        for row in range(2, 8):
+        # 보장사항 시트: F7~AD7 숫자만 추출하여 D7~Z7에 붙여넣기
+        for col in range(6, 30):  # F(6) to AD(30)
+            raw_value = main_ws2.cell(row=7, column=col).value
+            if raw_value is not None:
+                number = re.sub(r"[^\d]", "", str(raw_value))
+                print_ws.cell(row=7, column=col - 2).value = int(number) if number else ""
+
+        # 보장사항 시트: 2~6행, 9~45행은 원래대로 복사
+        for row in range(2, 7):  # 2~6행
             for col in range(6, 30):
                 print_ws.cell(row=row, column=col - 2).value = main_ws2.cell(row=row, column=col).value
 
-        for row in range(9, 46):
+        for row in range(9, 46):  # 9~45행
             for col in range(6, 30):
                 print_ws.cell(row=row + 3, column=col - 2).value = main_ws2.cell(row=row, column=col).value
 
+        # 제목 생성
         name_prefix = (main_ws1["B2"].value or "고객")[:3]
         detail_text = main_ws1["D2"].value or ""
         print_ws["A1"] = f"{name_prefix}님의 기존 보험 보장 분석 {detail_text}"
 
+        # 결과 저장 및 다운로드
         today_str = datetime.today().strftime("%Y%m%d")
         filename = f"{name_prefix}님의_보장분석_{today_str}.xlsx"
         output_excel = BytesIO()
