@@ -6,6 +6,28 @@ from datetime import datetime
 # ✅ 페이지 설정
 st.set_page_config(page_title="보장 분석 도우미", layout="centered")
 
+# ✅ 사이드바 안내문
+st.sidebar.markdown("### 📘 사용 방법 안내")
+st.sidebar.markdown("""
+1. **비밀번호를 입력**하여 인증합니다.  
+2. `컨설팅보장분석.xlsx` 파일을 업로드하세요.  
+3. (선택) `개인용 보장분석 폼.xlsx` 파일도 업로드할 수 있어요.  
+4. 분석이 완료되면 결과 파일을 다운로드할 수 있습니다.
+
+📌 참고:  
+- `print.xlsx` 파일을 업로드하지 않으면 **기본 폼**이 사용됩니다.  
+- 지원 파일 형식: `.xlsx` (엑셀 전용)
+""")
+
+# ✅ 구분선
+st.sidebar.markdown("---")
+
+# ✅ 제작자 및 버전 정보
+st.sidebar.markdown("👨‍💻 **제작자:** 병선")  
+st.sidebar.markdown("🗓️ **버전:** v1.0.0")  
+st.sidebar.markdown("📅 **최종 업데이트:** 2025-06-13")
+
+
 # ✅ 비밀번호 인증 (secrets.toml에서 불러오기)
 PASSWORD = st.secrets["PASSWORD"]
 
